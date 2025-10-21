@@ -2,6 +2,7 @@ package com.example.EcomerceUribe.servicios;
 
 import com.example.EcomerceUribe.modelos.Cliente;
 import com.example.EcomerceUribe.modelos.DTOS.ClienteDTO;
+import com.example.EcomerceUribe.modelos.Empleado;
 import com.example.EcomerceUribe.modelos.mapas.IClienteMapa;
 import com.example.EcomerceUribe.repositorios.IClienteRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,4 +43,15 @@ public class ClienteServicio {
                     "La ciudad del cliente es obligatoria"
             );
         }
+        //Intentar guardar el cliente
+        Cliente clienteQueGuardoElRepo = this.repositorio.save(datosCliente);
+        if (clienteQueGuardoElRepo == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error al guardar el cliente en la base de datos"
+            );
+        }
+        //Retornar el dto al controlado
+        return this.mapa.convertir_cliente_a_clientedto(clienteQueGuardoElRepo);
+    }
 }

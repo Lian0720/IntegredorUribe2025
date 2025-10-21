@@ -3,6 +3,7 @@ package com.example.EcomerceUribe.servicios;
 
 import com.example.EcomerceUribe.modelos.DTOS.EmpleadoDTO;
 import com.example.EcomerceUribe.modelos.Empleado;
+import com.example.EcomerceUribe.modelos.Pedido;
 import com.example.EcomerceUribe.modelos.mapas.IEmpleadoMapa;
 import com.example.EcomerceUribe.repositorios.IEmpleadoRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,4 +37,15 @@ public class EmpleadoServicio {
                     "La sede del empleado es obligatoria"
             );
         }
+        //Intentar guardar el empleado
+        Empleado empleadoQueGuardoElRepo = this.repositorio.save(datosEmpleado);
+        if (empleadoQueGuardoElRepo == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error al guardar el empleado en la base de datos"
+            );
+        }
+        //Retornar el dto al controlado
+        return this.mapa.convertir_empleado_a_empleadodto(empleadoQueGuardoElRepo);
+    }
 }

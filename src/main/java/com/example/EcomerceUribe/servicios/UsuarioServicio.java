@@ -58,6 +58,4 @@ public class UsuarioServicio {
         return this.mapa.convertir_usuario_a_usuariogenericodto(usuarioQueGuardoElRepo);
     }
 
-
-
 }
