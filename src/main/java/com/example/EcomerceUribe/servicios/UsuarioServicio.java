@@ -9,6 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class UsuarioServicio {
 
@@ -58,4 +61,57 @@ public class UsuarioServicio {
         return this.mapa.convertir_usuario_a_usuariogenericodto(usuarioQueGuardoElRepo);
     }
 
+    //Buscar Usuarios LIST (todos)
+    public List<UsuarioGenericoDTO> buscarTodosLosUsuarios(){
+        List<Usuario> listadeUsuariosConsultados=this.repositorio.findAll();
+        return this.mapa.convertir_lista_a_listadtogenerico(listadeUsuariosConsultados);
+    }
+    //Buscar usuario por ID
+
+    public UsuarioGenericoDTO buscarUsuarioGenericoPorID(Integer id){
+        Optional <Usuario> usuarioQueEstoyBuscando= this.repositorio.findById(id);
+        if (!usuarioQueEstoyBuscando.isPresent()){
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "No se encontro ningun usuario con el id "+id+ "suministrado"
+            );
+        }
+        Usuario usuarioEncontrado = usuarioQueEstoyBuscando.get();
+        return this.mapa.convertir_usuario_a_usuariogenericodto(usuarioEncontrado);
+    }
+    //eliminar usuario
+    public void eliminarUsuario(Integer id){
+        Optional<Usuario> usuarioQueEstoyBuscando=this .repositorio.findById(id);
+        if (!usuarioQueEstoyBuscando.isPresent()){
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "No se encontro ningun usuario con el id "+id+ "suministrado"
+            );
+    }
+    Usuario usuarioEncontrado = usuarioQueEstoyBuscando.get();
+        try {
+            this.repositorio.delete(usuarioEncontrado);
+        }catch (Exception error){
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "No se puedo eliminar el usuario, " +error.getMessage()
+            );
+        }
+
+        //modificar update datos del usuario
+        public UsuarioGenericoDTO actualizarUsuario(Integer id, Usuario datosActualizados){
+            Optional<Usuario> usuarioQueEstoyEditanto this.repositorio.findById(id);
+
+        }
+
+        //Aplique validaciones sobre datos enviados desde el Frond
+
+        //Actualizo los campos que permitieron modificar
+
+        //Nombre //Correo
+
+
+        //Concluyo actualizacion en la base de datos
+
+        }
 }

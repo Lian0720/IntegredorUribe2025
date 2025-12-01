@@ -7,7 +7,7 @@ import org.mapstruct.Mapping;
 
 import java.util.List;
 
-@Mapper(componentModel = "string")
+@Mapper(componentModel = "spring")
 public interface IEmpleadoMapa {
 
     @Mapping(source = "cargo", target = "cargo")

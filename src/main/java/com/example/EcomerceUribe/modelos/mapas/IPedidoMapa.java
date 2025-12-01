@@ -7,7 +7,7 @@ import org.mapstruct.Mapping;
 
 import java.util.List;
 
-@Mapper(componentModel = "string")
+@Mapper(componentModel = "spring")
 public interface IPedidoMapa {
 
     @Mapping(source = "montoTotal", target = "montoTotal")
