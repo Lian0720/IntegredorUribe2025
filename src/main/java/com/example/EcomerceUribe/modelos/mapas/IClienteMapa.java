@@ -15,5 +15,5 @@ public interface IClienteMapa {
     @Mapping(source = "ciudad", target = "ciudad")
     ClienteDTO convertir_cliente_a_clientedto (Cliente cliente);
 
-    List<ClienteDTO> convertir_cliente_a_clientedto (List<Cliente> list);
+    List<ClienteDTO> convertir_List_a_listdto (List<Cliente> list);
 }

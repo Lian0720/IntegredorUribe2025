@@ -16,6 +16,6 @@ public interface IProductoMapa {
     @Mapping(source = "precioUnitario", target = "precioUnitario")
     ProductoDTO convertir_producto_a_productodto (Producto producto);
 
-    List<ProductoDTO> convertir_list_a_listdto(List<Producto> List);
+    List<ProductoDTO> convertir_list_a_listdto(List<Producto>lista);
 
 }

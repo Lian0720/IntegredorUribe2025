@@ -1,5 +1,6 @@
 package com.example.EcomerceUribe.servicios;
 
+import com.example.EcomerceUribe.modelos.DTOS.UsuarioEspecialDTO;
 import com.example.EcomerceUribe.modelos.DTOS.UsuarioGenericoDTO;
 import com.example.EcomerceUribe.modelos.Usuario;
 import com.example.EcomerceUribe.modelos.mapas.IUsuarioMapa;
@@ -24,17 +25,17 @@ public class UsuarioServicio {
     //Declaro funciones para activar los servicios disponible del API
 
     //1. ACTIVADO EL SERVICIO DE GUARDADO DE DATOS
-    public UsuarioGenericoDTO guardarUsuariogenerico(Usuario datosUsuario){
+    public UsuarioGenericoDTO guardarUsuariogenerico(Usuario datosUsuario) {
         //LOGICA DE NEGOCIO
         //Validacion de correo duplicado
-        if(this.repositorio.findByCorreo(datosUsuario.getCorreo()).isPresent()){
+        if (this.repositorio.findByCorreo(datosUsuario.getCorreo()).isPresent()) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
                     "Ya existe un usuario registrado con el correo ingresado"
             );
         }
         //Validacion de que el nombre no esta vacio
-        if(datosUsuario.getNombres()==null || datosUsuario.getNombres().isBlank() ){
+        if (datosUsuario.getNombres() == null || datosUsuario.getNombres().isBlank()) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "El nombre del usuario es obligatorio"
@@ -42,7 +43,7 @@ public class UsuarioServicio {
 
         }
         //validacion de que la contraseña es minima
-        if(datosUsuario.getContraseña().length()<6){
+        if (datosUsuario.getContraseña().length() < 6) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "La contraseña debe tener al menos 6 caracteres"
@@ -50,8 +51,8 @@ public class UsuarioServicio {
 
         }
         //Intentar guardar el usuario
-        Usuario usuarioQueGuardoElRepo=this.repositorio.save(datosUsuario);
-        if(usuarioQueGuardoElRepo==null){
+        Usuario usuarioQueGuardoElRepo = this.repositorio.save(datosUsuario);
+        if (usuarioQueGuardoElRepo == null) {
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR,
                     "Error al guardar el usuario en la base de datos"
@@ -62,47 +63,54 @@ public class UsuarioServicio {
     }
 
     //Buscar Usuarios LIST (todos)
-    public List<UsuarioGenericoDTO> buscarTodosLosUsuarios(){
-        List<Usuario> listadeUsuariosConsultados=this.repositorio.findAll();
+    public List<UsuarioGenericoDTO> buscarTodosLosUsuarios() {
+        List<Usuario> listadeUsuariosConsultados = this.repositorio.findAll();
         return this.mapa.convertir_lista_a_listadtogenerico(listadeUsuariosConsultados);
     }
     //Buscar usuario por ID
 
-    public UsuarioGenericoDTO buscarUsuarioGenericoPorID(Integer id){
-        Optional <Usuario> usuarioQueEstoyBuscando= this.repositorio.findById(id);
-        if (!usuarioQueEstoyBuscando.isPresent()){
+    public UsuarioGenericoDTO buscarUsuarioGenericoPorID(Integer id) {
+        Optional<Usuario> usuarioQueEstoyBuscando = this.repositorio.findById(id);
+        if (!usuarioQueEstoyBuscando.isPresent()) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
-                    "No se encontro ningun usuario con el id "+id+ "suministrado"
+                    "No se encontro ningun usuario con el id " + id + "suministrado"
             );
         }
         Usuario usuarioEncontrado = usuarioQueEstoyBuscando.get();
         return this.mapa.convertir_usuario_a_usuariogenericodto(usuarioEncontrado);
     }
+
     //eliminar usuario
-    public void eliminarUsuario(Integer id){
-        Optional<Usuario> usuarioQueEstoyBuscando=this .repositorio.findById(id);
-        if (!usuarioQueEstoyBuscando.isPresent()){
+    public void eliminarUsuario(Integer id) {
+        Optional<Usuario> usuarioQueEstoyBuscando = this.repositorio.findById(id);
+        if (!usuarioQueEstoyBuscando.isPresent()) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
-                    "No se encontro ningun usuario con el id "+id+ "suministrado"
+                    "No se encontro ningun usuario con el id " + id + "suministrado"
             );
-    }
-    Usuario usuarioEncontrado = usuarioQueEstoyBuscando.get();
+        }
+        Usuario usuarioEncontrado = usuarioQueEstoyBuscando.get();
         try {
             this.repositorio.delete(usuarioEncontrado);
-        }catch (Exception error){
+        } catch (Exception error) {
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR,
-                    "No se puedo eliminar el usuario, " +error.getMessage()
+                    "No se puedo eliminar el usuario, " + error.getMessage()
             );
         }
+    }
 
-        //modificar update datos del usuario
-        public UsuarioGenericoDTO actualizarUsuario(Integer id, Usuario datosActualizados){
-            Optional<Usuario> usuarioQueEstoyEditanto this.repositorio.findById(id);
-
+    //modificar update datos del usuario
+    public UsuarioGenericoDTO actualizarUsuario(Integer id, Usuario datosActualizados) {
+        Optional<Usuario> usuarioQueEstoyEditanto = this.repositorio.findById(id);
+        if (!usuarioQueEstoyEditanto.isPresent()) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "No se encontro ningun usuario con el id " + id + "suministrado"
+            );
         }
+        Usuario usuarioEncontrado = usuarioQueEstoyEditanto.get();
 
         //Aplique validaciones sobre datos enviados desde el Frond
 
@@ -110,8 +118,22 @@ public class UsuarioServicio {
 
         //Nombre //Correo
 
+        usuarioEncontrado.setNombres(datosActualizados.getNombres());
+        usuarioEncontrado.setCorreo(datosActualizados.getCorreo());
 
         //Concluyo actualizacion en la base de datos
+        Usuario usuarioActuyalizado = this.repositorio.save(usuarioEncontrado);
 
+        if (usuarioActuyalizado == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error al actualizar el usuario en la base de datos. Intentar nuevamente"
+            );
         }
+
+        return this.mapa.convertir_usuario_a_usuariogenericodto(usuarioActuyalizado);
+
+    }
 }
+
+
